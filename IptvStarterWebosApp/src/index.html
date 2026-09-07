@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IPTV LG webOS</title>
+    <style>
+      body {
+        margin: 0;
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        padding: 30px;
+      }
+
+      .warning {
+        background: #3d2d00;
+        border: 1px solid #c99b2a;
+        color: #ffd874;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .channels {
+        display: grid;
+        gap: 12px;
+      }
+
+      .channel {
+        background: #1d1d1d;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 16px;
+        cursor: pointer;
+        text-align: left;
+        color: white;
+        font-size: 18px;
+      }
+
+      .channel:hover,
+      .channel:focus {
+        border-color: #ffb300;
+        outline: none;
+      }
+
+      .player {
+        margin-top: 24px;
+      }
+
+      video {
+        width: 100%;
+        max-width: 960px;
+        height: 540px;
+        background: black;
+        border-radius: 8px;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>IPTV Starter</h1>
+      <div class="warning">
+        Antes de acessar os canais, use VPN. Isso ajuda a contornar bloqueios e aumenta a privacidade.
+      </div>
+
+      <div id="status">Carregando canais...</div>
+      <div id="channels" class="channels" aria-live="polite"></div>
+
+      <div class="player">
+        <video id="videoPlayer" controls playsinline></video>
+      </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>

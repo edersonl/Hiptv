@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#000000">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hiptv"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Antes de acessar streams, use VPN. Isso pode ajudar a contornar bloqueios regionais e proteger sua privacidade."
+        android:textColor="#FF2D2D"
+        android:textSize="14sp"
+        android:paddingBottom="12dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#111111"
+        android:padding="8dp"
+        android:layout_marginBottom="12dp">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ao Vivo"
+            android:backgroundTint="#D71F26"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Filmes"
+            android:backgroundTint="#1A1A1A"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Séries"
+            android:backgroundTint="#1A1A1A"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Favs"
+            android:backgroundTint="#1A1A1A"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/playlistUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="URL da playlist M3U"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAAAAA"
+        android:background="#1E1E1E"
+        android:padding="12dp" />
+
+    <Button
+        android:id="@+id/loadPlaylistButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Carregar canais"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#D71F26"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E0E0E0"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp" />
+
+    <ListView
+        android:id="@+id/channelList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#D71F26"
+        android:dividerHeight="1dp" />
+
+</LinearLayout>

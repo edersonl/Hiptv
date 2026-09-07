@@ -1,0 +1,30 @@
+# Build results
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+# VS / IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Android artifacts
+*.apk
+*.aab
+*.apks
+*.keystore
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Node / webOS starter if used later
+node_modules/
+.npm/

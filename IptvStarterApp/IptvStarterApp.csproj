@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>IptvStarterApp</RootNamespace>
+    <AssemblyName>IptvStarterApp</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidEnableDesugar>true</AndroidEnableDesugar>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Common" Version="2.8.5.1" />
+    <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.8" />
+  </ItemGroup>
+</Project>
