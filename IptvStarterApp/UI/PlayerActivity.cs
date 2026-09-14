@@ -5,6 +5,8 @@ using Android.Views;
 using AndroidX.Media3.UI;
 using IptvStarterApp.Domain.Interfaces;
 using IptvStarterApp.Domain.Playback;
+using IptvStarterApp.Domain.Entities;
+using IptvStarterApp.Domain.ValueObjects;
 using IptvStarterApp.Infrastructure.Playback;
 using IptvStarterApp.Models;
 using IptvStarterApp.Services;
@@ -30,7 +32,7 @@ namespace IptvStarterApp.UI
         private bool _released;
         private readonly SemaphoreSlim _fallbackLock = new(1, 1);
         private CancellationTokenSource? _playbackLifecycle;
-
+        private PlaybackProgressService? _playbackProgressService;
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -48,6 +50,9 @@ namespace IptvStarterApp.UI
             _nextChannelName = Intent?.GetStringExtra("next_channel_name") ?? string.Empty;
             _nextChannelUrl = Intent?.GetStringExtra("next_channel_url") ?? string.Empty;
             _nextChannelGroup = Intent?.GetStringExtra("next_channel_group") ?? string.Empty;
+            _playbackProgressService =
+                new PlaybackProgressService(this);
+
             InitializePlaybackEngine();
 
             if (_titleView is not null)
@@ -237,8 +242,11 @@ namespace IptvStarterApp.UI
 
         protected override void OnPause()
         {
+            SavePlaybackProgress();
+
             ReleasePlaybackEngine();
-            base.OnPause();
+
+        base.OnPause();
         }
 
         protected override void OnStop()
@@ -275,7 +283,55 @@ namespace IptvStarterApp.UI
             ReleasePlaybackEngine();
             base.OnDestroy();
         }
+        protected override void OnDestroy()
+{
+            ReleasePlaybackEngine();
+        base.OnDestroy();
+}
+        private void SavePlaybackProgress()
+{
+            if (_playbackEngine is null)
+            {
+            return;
+        }
 
+        var duration =
+            _playbackEngine.Duration;
+
+        if (duration is null)
+        {
+            return;
+        }
+
+        var position =
+            _playbackEngine.Position;
+
+        if (position < TimeSpan.FromSeconds(30))
+        {
+            return;
+        }
+
+        var progress =
+        new PlaybackProgress(
+            new MediaId(_videoUrl),
+            position,
+            duration,
+            DateTimeOffset.UtcNow);
+
+        var history =
+          _playbackProgressService?
+            .GetHistory()
+            .ToList()
+            ?? new List<PlaybackProgress>();
+
+       history.RemoveAll(
+           item => item.MediaId.ToString() == _videoUrl);
+
+       history.Add(progress);
+
+       _playbackProgressService?
+        .SaveHistory(history);
+}
         private void ReleasePlaybackEngine()
         {
             if (_released)
