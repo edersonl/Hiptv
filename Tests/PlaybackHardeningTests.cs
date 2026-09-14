@@ -94,6 +94,8 @@ public sealed class PlaybackHardeningTests
             add { }
             remove { }
         }
+        public TimeSpan Position => TimeSpan.Zero;
+        public TimeSpan? Duration => null;
         public int PlayCalls { get; private set; }
 
         public Task PlayAsync(PlaybackRequest request, CancellationToken cancellationToken = default)

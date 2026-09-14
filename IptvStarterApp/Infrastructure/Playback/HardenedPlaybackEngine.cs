@@ -52,7 +52,8 @@ public sealed class HardenedPlaybackEngine : IPlaybackEngine, IDisposable
 
     public event EventHandler<PlaybackStateChangedEventArgs>? StateChanged;
     public PlaybackMetrics Metrics { get; }
-
+    public TimeSpan Position => _inner.Position;
+    public TimeSpan? Duration => _inner.Duration;
     public async Task PlayAsync(PlaybackRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);

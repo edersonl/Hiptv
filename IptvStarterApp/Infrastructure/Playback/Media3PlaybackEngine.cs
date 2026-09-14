@@ -28,7 +28,13 @@ public sealed class Media3PlaybackEngine : Java.Lang.Object, IPlaybackEngine
     }
 
     public event EventHandler<DomainPlaybackStateChangedEventArgs>? StateChanged;
-
+    public TimeSpan Position =>
+    TimeSpan.FromMilliseconds(
+        Math.Max(0, _player.CurrentPosition));
+    public TimeSpan? Duration =>
+    _player.Duration > 0
+        ? TimeSpan.FromMilliseconds(_player.Duration)
+        : null;
     public Task PlayAsync(PlaybackRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);

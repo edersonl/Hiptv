@@ -12,7 +12,16 @@ public sealed class LegacyMediaPlayerEngine : Java.Lang.Object, IPlaybackEngine,
     private bool _disposed;
 
     public event EventHandler<PlaybackStateChangedEventArgs>? StateChanged;
-
+    public TimeSpan Position =>
+    _player is null
+        ? TimeSpan.Zero
+        : TimeSpan.FromMilliseconds(
+            Math.Max(0, _player.CurrentPosition));
+    public TimeSpan? Duration =>
+    _player is null || _player.Duration <= 0
+        ? null
+        : TimeSpan.FromMilliseconds(
+            _player.Duration);
     public Task PlayAsync(PlaybackRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
