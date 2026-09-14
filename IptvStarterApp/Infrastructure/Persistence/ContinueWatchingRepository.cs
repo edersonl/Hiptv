@@ -6,11 +6,17 @@ namespace IptvStarterApp.Infrastructure.Persistence;
 public sealed class ContinueWatchingRepository : IContinueWatchingRepository
 {
     private readonly IPlaybackProgressRepository _progressRepository;
+    private readonly IContentRepository _contentRepository;
 
     public ContinueWatchingRepository(
-        IPlaybackProgressRepository progressRepository)
+        IPlaybackProgressRepository progressRepository,
+        IContentRepository contentRepository)
     {
-        _progressRepository = progressRepository;
+        _progressRepository = progressRepository
+            ?? throw new ArgumentNullException(nameof(progressRepository));
+
+        _contentRepository = contentRepository
+            ?? throw new ArgumentNullException(nameof(contentRepository));
     }
 
     public async Task<IReadOnlyList<ContinueWatching>> ListAsync(
@@ -23,6 +29,32 @@ public sealed class ContinueWatchingRepository : IContinueWatchingRepository
                 profileId,
                 cancellationToken);
 
-        return Array.Empty<ContinueWatching>();
+        var eligible =
+            history
+                .Where(progress => progress.IsEligibleForContinueWatching)
+                .Take(limit)
+                .ToList();
+
+        var result = new List<ContinueWatching>();
+
+        foreach (var progress in eligible)
+        {
+            var mediaItem =
+                await _contentRepository.GetByIdAsync(
+                    progress.MediaId,
+                    cancellationToken);
+
+            if (mediaItem is null)
+            {
+                continue;
+            }
+
+            result.Add(
+                new ContinueWatching(
+                    mediaItem,
+                    progress));
+        }
+
+        return result;
     }
 }
