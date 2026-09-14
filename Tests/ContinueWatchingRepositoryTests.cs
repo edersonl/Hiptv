@@ -122,4 +122,57 @@ public sealed class ContinueWatchingRepositoryTests
         Assert.Equal("Interestelar", result[0].MediaItem.Name);
         Assert.Equal("Matrix", result[1].MediaItem.Name);
     }
+
+ [Fact]
+public async Task ListAsync_ShouldRespectLimit()
+{
+    var progressRepository =
+        new PlaybackProgressRepository();
+
+    var contentRepository =
+        new FakeContentRepository();
+
+    var movie1 = new Movie(
+        new MediaId("movie-1"),
+        "Matrix",
+        new Uri("https://example.com/movie1.mp4"));
+
+    var movie2 = new Movie(
+        new MediaId("movie-2"),
+        "Interestelar",
+        new Uri("https://example.com/movie2.mp4"));
+
+    await contentRepository.SaveAsync(movie1);
+    await contentRepository.SaveAsync(movie2);
+
+    await progressRepository.SaveAsync(
+        new PlaybackProgress(
+            movie1.Id,
+            TimeSpan.FromMinutes(20),
+            TimeSpan.FromMinutes(120),
+            DateTimeOffset.UtcNow.AddMinutes(-10)));
+
+    await progressRepository.SaveAsync(
+        new PlaybackProgress(
+            movie2.Id,
+            TimeSpan.FromMinutes(30),
+            TimeSpan.FromMinutes(120),
+            DateTimeOffset.UtcNow));
+
+    var repository =
+        new ContinueWatchingRepository(
+            progressRepository,
+            contentRepository);
+
+    var result =
+        await repository.ListAsync(
+            "local",
+            1);
+
+    Assert.Single(result);
+
+    Assert.Equal(
+        "Interestelar",
+        result[0].MediaItem.Name);
+}
 }
