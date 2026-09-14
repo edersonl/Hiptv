@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#000000">
+    android:background="#0B0D10">
 
     <TextView
         android:id="@+id/playerTitle"
@@ -16,6 +16,23 @@
         android:textStyle="bold"
         android:paddingBottom="12dp" />
 
+    <TextView
+        android:id="@+id/channelInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="TV ao vivo"
+        android:textColor="#9CA3AF"
+        android:textSize="14sp" />
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/mediaPlayerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#111111"
+        android:keepScreenOn="true" />
+
     <ProgressBar
         android:id="@+id/playerProgress"
         style="@android:style/Widget.ProgressBar.Large"
@@ -24,30 +41,49 @@
         android:layout_gravity="center_horizontal"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/playButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Reproduzir"
-        android:backgroundTint="#D71F26"
-        android:textColor="#FFFFFF" />
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <Button
+            android:id="@+id/playButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#14B8A6"
+            android:text="Reproduzir"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#374151"
+            android:text="Parar"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/favoriteButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#FBBF24"
+            android:text="Favoritar"
+            android:textColor="#111827" />
+    </LinearLayout>
 
     <Button
-        android:id="@+id/stopButton"
+        android:id="@+id/nextChannelButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Parar"
         android:layout_marginTop="8dp"
-        android:backgroundTint="#1A1A1A"
-        android:textColor="#FFFFFF" />
-
-    <Button
-        android:id="@+id/favoriteButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Adicionar Favorito"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#D71F26"
+        android:backgroundTint="#1F2937"
+        android:text="Próximo canal"
         android:textColor="#FFFFFF" />
 
 </LinearLayout>

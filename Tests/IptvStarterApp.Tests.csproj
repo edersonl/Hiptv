@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\IptvStarterApp\Models\ChannelItem.cs" Link="Models\ChannelItem.cs" />
+    <Compile Include Steima chuca mão tercinita o piazinho de chamado exatamente ela pediu que a boa diga ouviu funcionado além disso parecidos com estes relatórios de inteligência e gosta de alguma forma do início está autoridade na semana passada na região de Brasil de inteligência de autoridades de investigação tudo que for bicho agora a carinha mais portáticas entre arrumar as coisas do filho dobrar roupas que a mulher já tá muito antigo pra gente poder votar em dez anos que sente você acaba americano mais do ano de alguém tranquilamente faz de ano que a mãe deu pra eles a sonho não precisa barrinho mas milagre a terra se alimentar direito a célula se alimentando direito e chegou para mim e a semana para fora do no dia se a intimação lá para ser testemunha do teu processo dia vinte e nove né só pedi caro pares com muito carinho a todos nós e aí eu só falei para ele que eu quero orientando o que eu tenho que dizer que eu não tô a bomba ele falou que quando o Leonard falou que uma semana mais ou menos antes ele vai conversar comigo com outras testimônicas para poder capitar a orientação de quatro e que tem que testemunhar determinado dia do processo de parece teu nome do dia vinte e nove né de dois veículos a partir do ano que sentimos para esse grato aqui por você dona disso Em nome de Jesus e quando for preciso milhar quando for preciso eu vou lá em futuro a esperar tudo certo né do tinha tudo vai dar tudo certo e pode ter cheiro daí o canal eu te amo dona dispara com você agradando já que legal fico muito feliz fico muito feliz obrigado tem razão daqui pra uma boa coisa né a mãe se machucou da notícia roupeu os americanos de dos fronzeus a minha mãe disse que fregadinha o dia todo né dos fronzeus portas predominantes para melhorar o estado do Brasil vai capirando graças a Bolsonaro obrigado pela ligação do ativo nas minhas orações e no meu coração do pelijão que Deus o protege até o final de semana em nome de Jesus Amém abraço gigantesco te amo fica com Deus Amém a todos tira beijo que é bonito pescoço e faz o cobrinho logo de setembro seguido resultado consultórios qualificado no Texas de Mulher de casa foi o João de Segurança foi matróquico visitado então você não queresse a insultar pelo ativo dos dias todo dia estruturas que é o Personeiro e utilizar coisas diferentes e frutos da vida social e de movimento de localidade então vereador Rafael explica porque retiramente é promovido trinta anos antes da independência do Brasil através de texto retornáculo de militar e legalizado para ele fundir em parte direito mudaram de falar martinho de grama torneia independente do restaurado em casa="..\IptvStarterApp\Domain\ValueObjects\*.cs" Link="Domain\ValueObjects\%(Filename)%(Extension)" />
+    <Compile Include="..\IptvStarterApp\Domain\Enums\*.cs" Link="Domain\Enums\%(Filename)%(Extension)" />
+    <Compile Include="..\IptvStarterApp\Domain\Entities\*.cs" Link="Domain\Entities\%(Filename)%(Extension)" />
+    <Compile Include="..\IptvStarterApp\Domain\Interfaces\IContentRepository.cs" Link="Domain\Interfaces\IContentRepository.cs" />
+    <Compile Include="..\IptvStarterApp\Domain\Interfaces\IPlaybackProgressRepository.cs" Link="Domain\Interfaces\IPlaybackProgressRepository.cs" />
+    <Compile Include="..\IptvStarterApp\Domain\Interfaces\IContinueWatchingRepository.cs" Link="Domain\Interfaces\IContinueWatchingRepository.cs" />
+    <Compile Include="..\IptvStarterApp\Domain\Interfaces\IFavoritesRepository.cs" Link="Domain\Interfaces\IFavoritesRepository.cs" />
+    <Compile Include="..\IptvStarterApp\Domain\Interfaces\IPlaylistRepository.cs" Link="Domain\Interfaces\IPlaylistRepository.cs" />
+    <Compile Include="..\IptvStarterApp\Domain\Playback\PlaybackRequest.cs" Link="Domain\Playback\PlaybackRequest.cs" />
+    <Compile Include="..\IptvStarterApp\Domain\Playback\PlaybackState.cs" Link="Domain\Playback\PlaybackState.cs" />
+    <Compile Include="..\IptvStarterApp\Domain\Interfaces\IPlaybackEngine.cs" Link="Domain\Interfaces\IPlaybackEngine.cs" />
+    <Compile Include="..\IptvStarterApp\Infrastructure\Playback\PlaybackMetrics.cs" Link="Infrastructure\Playback\PlaybackMetrics.cs" />
+    <Compile Include="..\IptvStarterApp\Infrastructure\Playback\PlaybackHealthReport.cs" Link="Infrastructure\Playback\PlaybackHealthReport.cs" />
+    <Compile Include="..\IptvStarterApp\Infrastructure\Playback\PlaybackDiagnostics.cs" Link="Infrastructure\Playback\PlaybackDiagnostics.cs" />
+    <Compile Include="..\IptvStarterApp\Infrastructure\Playback\HardenedPlaybackEngine.cs" Link="Infrastructure\Playback\HardenedPlaybackEngine.cs" />
+    <Compile Include="..\IptvStarterApp\Infrastructure\Playlist\M3uParser.cs" Link="Infrastructure\Playlist\M3uParser.cs" />
+  </ItemGroup>
+</Project>

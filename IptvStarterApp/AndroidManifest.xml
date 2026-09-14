@@ -12,7 +12,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".UI.BottomNavigationActivity"
+            android:name=".UI.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,11 +21,11 @@
         </activity>
 
         <activity
-            android:name=".UI.HomeActivity"
+            android:name=".UI.MediaListActivity"
             android:exported="false" />
 
         <activity
-            android:name=".UI.MediaListActivity"
+            android:name=".UI.SearchActivity"
             android:exported="false" />
 
         <activity

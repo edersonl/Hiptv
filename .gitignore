@@ -1,0 +1,16 @@
+# .NET / Android build outputs
+**/bin/
+**/obj/
+**/TestResults/
+TestResults/
+
+# IDE and user-local files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Android signing and local configuration
+*.keystore
+*.jks
+local.properties

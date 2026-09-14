@@ -3,25 +3,88 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#000000"
-    android:padding="16dp">
+    android:background="#0B0D10"
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/mediaTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Categoria"
-        android:textColor="#FFFFFF"
+        android:textColor="#F9FAFB"
         android:textStyle="bold"
         android:textSize="24sp"
         android:paddingBottom="12dp" />
 
-    <ListView
-        android:id="@+id/mediaList"
+    <Spinner
+        android:id="@+id/categoryFilter"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_input"
+        android:padding="10dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="#D71F26"
-        android:dividerHeight="1dp" />
+        android:layout_marginTop="14dp"
+        android:orientation="horizontal">
+
+        <ListView
+            android:id="@+id/mediaList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.25"
+            android:choiceMode="singleChoice"
+            android:divider="#27313A"
+            android:dividerHeight="1dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_panel"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PREVIEW"
+                android:textColor="#2DD4BF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/previewName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Selecione um canal"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/previewInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Informações do canal aparecem aqui."
+                android:textColor="#9CA3AF"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/watchPreviewButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="#14B8A6"
+                android:text="Assistir"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

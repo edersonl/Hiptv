@@ -6,4 +6,14 @@
         <item name="colorAccent">#FFFFFF</item>
         <item name="android:windowBackground">#000000</item>
     </style>
+
+    <style name="HomeSectionTitle" parent="android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:textColor">#F9FAFB</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

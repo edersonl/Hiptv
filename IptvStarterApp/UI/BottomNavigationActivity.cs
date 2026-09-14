@@ -12,12 +12,6 @@ namespace IptvStarterApp.UI
     public class BottomNavigationActivity : Activity
     {
         private readonly MediaCatalogService _catalogService = new();
-        private readonly FavoritesService? _favoritesService;
-
-        public BottomNavigationActivity()
-        {
-            _favoritesService = null;
-        }
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -25,17 +19,20 @@ namespace IptvStarterApp.UI
             SetContentView(Resource.Layout.activity_bottom_navigation);
 
             var title = FindViewById<TextView>(Resource.Id.navTitle);
-            title.Text = AppConfig.AppName;
+            if (title is not null)
+            {
+                title.Text = AppConfig.AppName;
+            }
 
             var liveButton = FindViewById<Button>(Resource.Id.navLive);
             var moviesButton = FindViewById<Button>(Resource.Id.navMovies);
             var seriesButton = FindViewById<Button>(Resource.Id.navSeries);
             var favoritesButton = FindViewById<Button>(Resource.Id.navFavorites);
 
-            liveButton.Click += (_, _) => OpenCategory(MediaCategory.Live);
-            moviesButton.Click += (_, _) => OpenCategory(MediaCategory.Movies);
-            seriesButton.Click += (_, _) => OpenCategory(MediaCategory.Series);
-            favoritesButton.Click += (_, _) => OpenCategory(MediaCategory.Favorites);
+            if (liveButton is not null) liveButton.Click += (_, _) => OpenCategory(MediaCategory.Live);
+            if (moviesButton is not null) moviesButton.Click += (_, _) => OpenCategory(MediaCategory.Movies);
+            if (seriesButton is not null) seriesButton.Click += (_, _) => OpenCategory(MediaCategory.Series);
+            if (favoritesButton is not null) favoritesButton.Click += (_, _) => OpenCategory(MediaCategory.Favorites);
         }
 
         private void OpenCategory(string category)

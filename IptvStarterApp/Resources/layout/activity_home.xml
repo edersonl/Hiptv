@@ -1,34 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#000000"
-    android:padding="16dp">
+    android:background="#0B0D10"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/homeTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hiptv"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:paddingBottom="12dp" />
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Use VPN antes de acessar conteudos externos."
-        android:textColor="#FF2D2D"
-        android:paddingBottom="12dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HIPTV"
+            android:textColor="#F9FAFB"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-    <ListView
-        android:id="@+id/categoryList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="#D71F26"
-        android:dividerHeight="1dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_hero"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-</LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sua TV começa aqui"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Conecte sua lista M3U e assista em qualquer tela."
+                android:textColor="#D1FAE5"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/playlistUrlInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_input"
+                android:hint="https://servidor/lista.m3u"
+                android:inputType="textUri"
+                android:padding="14dp"
+                android:singleLine="true"
+                android:textColor="#111827"
+                android:textColorHint="#6B7280" />
+
+            <Button
+                android:id="@+id/connectPlaylistButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#FBBF24"
+                android:text="Conectar playlist"
+                android:textColor="#111827"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/homeStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Informe sua playlist para começar"
+                android:textColor="#ECFDF5" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <Button android:id="@+id/openLiveButton" android:layout_width="0dp" android:layout_height="56dp" android:layout_weight="1" android:backgroundTint="#14B8A6" android:text="Ao vivo" android:textColor="#FFFFFF" />
+            <Button android:id="@+id/openFavoritesButton" android:layout_width="0dp" android:layout_height="56dp" android:layout_marginStart="8dp" android:layout_weight="1" android:backgroundTint="#374151" android:text="Favoritos" android:textColor="#FFFFFF" />
+            <Button android:id="@+id/openSearchButton" android:layout_width="0dp" android:layout_height="56dp" android:layout_marginStart="8dp" android:layout_weight="1" android:backgroundTint="#374151" android:text="Buscar" android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <TextView style="@style/HomeSectionTitle" android:text="Canais recentes" />
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none">
+            <LinearLayout android:id="@+id/recentContainer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <TextView style="@style/HomeSectionTitle" android:text="Favoritos" />
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none">
+            <LinearLayout android:id="@+id/favoritesContainer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <TextView style="@style/HomeSectionTitle" android:text="Categorias" />
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none">
+            <LinearLayout android:id="@+id/categoriesContainer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" />
+        </HorizontalScrollView>
+    </LinearLayout>
+</ScrollView>

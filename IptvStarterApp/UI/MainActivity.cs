@@ -10,7 +10,7 @@ using System.Net;
 
 namespace IptvStarterApp.UI
 {
-    [Activity(Label = "Hiptv", MainLauncher = true)]
+    [Activity(Label = "Hiptv")]
     public class MainActivity : Activity
     {
         private readonly string _defaultPlaylistUrl = AppConfig.DefaultPlaylistUrl;
@@ -33,11 +33,11 @@ namespace IptvStarterApp.UI
             _statusText = FindViewById<TextView>(Resource.Id.statusText);
             _channelList = FindViewById<ListView>(Resource.Id.channelList);
 
-            _urlText.Text = _defaultPlaylistUrl;
+            if (_urlText is not null) _urlText.Text = _defaultPlaylistUrl;
 
-            _loadButton.Click += async (_, _) => await LoadChannelsAsync();
+            if (_loadButton is not null) _loadButton.Click += async (_, _) => await LoadChannelsAsync();
 
-            _channelList.ItemClick += (_, e) =>
+            if (_channelList is not null) _channelList.ItemClick += (_, e) =>
             {
                 var channel = _channels[e.Position];
                 var intent = new Intent(this, typeof(PlayerActivity));
@@ -46,7 +46,10 @@ namespace IptvStarterApp.UI
                 StartActivity(intent);
             };
 
-            _statusText.Text = $"{AppConfig.WarningMessage}\n\nLinks:\n{AppConfig.DownloadUrl}\n{AppConfig.DownloadUrlAlt}\n\nLite:\n{AppConfig.LiteApkUrl}\n{AppConfig.LiteApkUrlAlt}\n\nVPN:\n{AppConfig.ProtonVpnUrl}\n{AppConfig.CloudflareWarpUrl}\n\n{AppConfig.AppInfoMessage}";
+            if (_statusText is not null)
+            {
+                _statusText.Text = $"{AppConfig.WarningMessage}\n\nLinks:\n{AppConfig.DownloadUrl}\n{AppConfig.DownloadUrlAlt}\n\nLite:\n{AppConfig.LiteApkUrl}\n{AppConfig.LiteApkUrlAlt}\n\nVPN:\n{AppConfig.ProtonVpnUrl}\n{AppConfig.CloudflareWarpUrl}\n\n{AppConfig.AppInfoMessage}";
+            }
         }
 
         private async Task LoadChannelsAsync()

@@ -1,12 +1,13 @@
 using Android.App;
 using Android.OS;
+using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using IptvStarterApp.Config;
 
 namespace IptvStarterApp.Platforms.AndroidTV
 {
-    [Activity(Label = "IPTV Smart TV", MainLauncher = true, Theme = "@style/Theme.AppCompat.Light.NoActionBar")]
+    [Activity(Label = "IPTV Smart TV", Theme = "@style/Theme.AppCompat.Light.NoActionBar")]
     public class AndroidTVMainActivity : AppCompatActivity
     {
         protected override void OnCreate(Bundle? savedInstanceState)
@@ -15,24 +16,24 @@ namespace IptvStarterApp.Platforms.AndroidTV
 
             var layout = new LinearLayout(this)
             {
-                Orientation = Orientation.Vertical,
-                Padding = 32
+                Orientation = Orientation.Vertical
             };
+            layout.SetPadding(32, 32, 32, 32);
 
             var title = new TextView(this)
             {
                 Text = AppConfig.AppName,
                 TextSize = 28,
-                TextAlignment = TextAlignment.Center
+                Gravity = GravityFlags.CenterHorizontal
             };
 
             var warning = new TextView(this)
             {
                 Text = AppConfig.WarningMessage,
                 TextSize = 18,
-                TextAlignment = TextAlignment.Center,
-                Padding = 20
+                Gravity = GravityFlags.CenterHorizontal
             };
+            warning.SetPadding(20, 20, 20, 20);
 
             var btn = new Button(this)
             {

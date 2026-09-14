@@ -1,28 +1,35 @@
 using Android.App;
-using Android.Media;
 using Android.OS;
 using Android.Widget;
 using Android.Views;
+using AndroidX.Media3.UI;
+using IptvStarterApp.Domain.Interfaces;
+using IptvStarterApp.Domain.Playback;
+using IptvStarterApp.Infrastructure.Playback;
 using IptvStarterApp.Models;
 using IptvStarterApp.Services;
 
 namespace IptvStarterApp.UI
 {
     [Activity(Label = "Player")]
-    public class PlayerActivity : Activity, MediaPlayer.IOnCompletionListener, MediaPlayer.IOnErrorListener
+    public class PlayerActivity : Activity
     {
-        private MediaPlayer? _mediaPlayer;
+        private IPlaybackEngine? _playbackEngine;
         private TextView? _titleView;
         private ProgressBar? _progressBar;
+        private PlayerView? _playerView;
         private Button? _favoriteButton;
+        private TextView? _channelInfoView;
         private string _videoUrl = string.Empty;
         private string _channelName = string.Empty;
-        private readonly FavoritesService? _favoritesService;
-
-        public PlayerActivity()
-        {
-            _favoritesService = null;
-        }
+        private string _channelGroup = "TV ao vivo";
+        private string _nextChannelName = string.Empty;
+        private string _nextChannelUrl = string.Empty;
+        private string _nextChannelGroup = string.Empty;
+        private bool _usingLegacyPlayer;
+        private bool _released;
+        private readonly SemaphoreSlim _fallbackLock = new(1, 1);
+        private CancellationTokenSource? _playbackLifecycle;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -31,31 +38,115 @@ namespace IptvStarterApp.UI
 
             _titleView = FindViewById<TextView>(Resource.Id.playerTitle);
             _progressBar = FindViewById<ProgressBar>(Resource.Id.playerProgress);
+            _playerView = FindViewById<PlayerView>(Resource.Id.mediaPlayerView);
             _favoriteButton = FindViewById<Button>(Resource.Id.favoriteButton);
+            _channelInfoView = FindViewById<TextView>(Resource.Id.channelInfo);
 
-            _channelName = Intent.GetStringExtra("channel_name") ?? "Canal IPTV";
-            _videoUrl = Intent.GetStringExtra("channel_url") ?? string.Empty;
+            _channelName = Intent?.GetStringExtra("channel_name") ?? "Canal IPTV";
+            _videoUrl = Intent?.GetStringExtra("channel_url") ?? string.Empty;
+            _channelGroup = Intent?.GetStringExtra("channel_group") ?? "TV ao vivo";
+            _nextChannelName = Intent?.GetStringExtra("next_channel_name") ?? string.Empty;
+            _nextChannelUrl = Intent?.GetStringExtra("next_channel_url") ?? string.Empty;
+            _nextChannelGroup = Intent?.GetStringExtra("next_channel_group") ?? string.Empty;
+            InitializePlaybackEngine();
 
-            _titleView.Text = _channelName;
+            if (_titleView is not null)
+            {
+                _titleView.Text = _channelName;
+            }
+
+            if (_channelInfoView is not null)
+            {
+                var host = Uri.TryCreate(_videoUrl, UriKind.Absolute, out var source) ? source.Host : "Fonte externa";
+                _channelInfoView.Text = $"{_channelGroup}  •  {host}";
+            }
 
             var playButton = FindViewById<Button>(Resource.Id.playButton);
-            playButton.Click += (_, _) => StartPlayback();
+            if (playButton is not null)
+            {
+                playButton.Click += async (_, _) => await StartPlaybackAsync();
+            }
 
             var stopButton = FindViewById<Button>(Resource.Id.stopButton);
-            stopButton.Click += (_, _) => StopPlayback();
-
-            _favoriteButton.Click += (_, _) =>
+            if (stopButton is not null)
             {
-                var channel = new ChannelItem { Name = _channelName, Url = _videoUrl };
-                var service = new FavoritesService(this);
-                service.ToggleFavorite(channel);
-                var isFavorite = service.IsFavorite(channel);
-                _favoriteButton.Text = isFavorite ? "Remover Favorito" : "Adicionar Favorito";
-                Toast.MakeText(this, isFavorite ? "Adicionado aos favoritos." : "Removido dos favoritos.", ToastLength.Short)?.Show();
-            };
+                stopButton.Click += async (_, _) => await StopPlaybackAsync();
+            }
+
+            if (_favoriteButton is not null)
+            {
+                var favoriteChannel = new ChannelItem { Name = _channelName, Url = _videoUrl, Group = _channelGroup };
+                var favoritesService = new FavoritesService(this);
+                _favoriteButton.Text = favoritesService.IsFavorite(favoriteChannel) ? "Remover favorito" : "Favoritar";
+                _favoriteButton.Click += (_, _) =>
+                {
+                    favoritesService.ToggleFavorite(favoriteChannel);
+                    var isFavorite = favoritesService.IsFavorite(favoriteChannel);
+                    _favoriteButton.Text = isFavorite ? "Remover favorito" : "Favoritar";
+                    Toast.MakeText(this, isFavorite ? "Adicionado aos favoritos." : "Removido dos favoritos.", ToastLength.Short)?.Show();
+                };
+            }
+
+            var nextButton = FindViewById<Button>(Resource.Id.nextChannelButton);
+            if (nextButton is not null)
+            {
+                nextButton.Text = string.IsNullOrWhiteSpace(_nextChannelName)
+                    ? "Próximo indisponível"
+                    : $"Próximo: {_nextChannelName}";
+                nextButton.Enabled = !string.IsNullOrWhiteSpace(_nextChannelUrl);
+                nextButton.Click += (_, _) => OpenNextChannel();
+            }
+
+            _ = StartPlaybackAsync();
         }
 
-        private void StartPlayback()
+        private void OpenNextChannel()
+        {
+            if (string.IsNullOrWhiteSpace(_nextChannelUrl)) return;
+            var next = new ChannelItem { Name = _nextChannelName, Url = _nextChannelUrl, Group = _nextChannelGroup };
+            new ChannelStoreService(this).AddRecent(next);
+            var intent = new Android.Content.Intent(this, typeof(PlayerActivity));
+            intent.PutExtra("channel_name", next.Name);
+            intent.PutExtra("channel_url", next.Url);
+            intent.PutExtra("channel_group", next.Group);
+            StartActivity(intent);
+            Finish();
+        }
+
+        private IPlaybackEngine CreatePlaybackEngine()
+        {
+            try
+            {
+                _usingLegacyPlayer = false;
+                return new Media3PlaybackEngine(this, _playerView!);
+            }
+            catch
+            {
+                Android.Util.Log.Warn("Hiptv/Playback", "Media3 indisponível; usando player legado.");
+                _usingLegacyPlayer = true;
+                return new LegacyMediaPlayerEngine();
+            }
+        }
+
+        private void InitializePlaybackEngine()
+        {
+            if (_playbackEngine is not null)
+            {
+                return;
+            }
+
+            _released = false;
+            _playbackLifecycle?.Dispose();
+            _playbackLifecycle = new CancellationTokenSource();
+            _playbackEngine = DecoratePlaybackEngine(CreatePlaybackEngine());
+            _playbackEngine.StateChanged += OnPlaybackStateChanged;
+        }
+
+        private static IPlaybackEngine DecoratePlaybackEngine(IPlaybackEngine engine) =>
+            new HardenedPlaybackEngine(engine, new PlaybackDiagnostics(
+                message => Android.Util.Log.Debug("Hiptv/Playback", message)));
+
+        private async Task StartPlaybackAsync()
         {
             if (string.IsNullOrWhiteSpace(_videoUrl))
             {
@@ -65,71 +156,159 @@ namespace IptvStarterApp.UI
 
             try
             {
-                _progressBar.Visibility = ViewStates.Visible;
-                _mediaPlayer?.Release();
-
-                _mediaPlayer = new MediaPlayer();
-                _mediaPlayer.SetAudioStreamType(Stream.Music);
-                _mediaPlayer.SetOnCompletionListener(this);
-                _mediaPlayer.SetOnErrorListener(this);
-
-                _mediaPlayer.SetDataSource(_videoUrl);
-                _mediaPlayer.PrepareAsync();
-                _mediaPlayer.SetOnPreparedListener(new MediaPlayerPreparedListener(this));
-            }
-            catch (Exception ex)
-            {
-                Toast.MakeText(this, $"Erro ao iniciar stream: {ex.Message}", ToastLength.Long)?.Show();
-            }
-        }
-
-        private void StopPlayback()
-        {
-            _mediaPlayer?.Stop();
-            _mediaPlayer?.Release();
-            _mediaPlayer = null;
-            _progressBar.Visibility = ViewStates.Gone;
-        }
-
-        public void OnCompletion(MediaPlayer? mp)
-        {
-            _progressBar.Visibility = ViewStates.Gone;
-            Toast.MakeText(this, "Stream finalizado.", ToastLength.Short)?.Show();
-        }
-
-        public bool OnError(MediaPlayer? mp, MediaError what, int extra)
-        {
-            _progressBar.Visibility = ViewStates.Gone;
-            Toast.MakeText(this, "Erro no stream. Verifique a URL e a conexão.", ToastLength.Long)?.Show();
-            return true;
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            _mediaPlayer?.Release();
-            _mediaPlayer = null;
-        }
-
-        private sealed class MediaPlayerPreparedListener : Java.Lang.Object, MediaPlayer.IOnPreparedListener
-        {
-            private readonly PlayerActivity _activity;
-
-            public MediaPlayerPreparedListener(PlayerActivity activity)
-            {
-                _activity = activity;
-            }
-
-            public void OnPrepared(MediaPlayer? mp)
-            {
-                if (mp == null)
+                SetProgressVisible(true);
+                var playbackEngine = _playbackEngine;
+                var cancellationToken = _playbackLifecycle?.Token ?? CancellationToken.None;
+                if (playbackEngine is null || cancellationToken.IsCancellationRequested)
                 {
                     return;
                 }
 
-                mp.Start();
-                _activity._progressBar.Visibility = ViewStates.Gone;
+                await playbackEngine.PlayAsync(new PlaybackRequest(_videoUrl, _channelName), cancellationToken);
             }
+            catch (System.OperationCanceledException) when (_released)
+            {
+            }
+            catch (Exception ex)
+            {
+                Android.Util.Log.Warn("Hiptv/Playback", $"Falha ao iniciar reprodução: {ex.GetType().Name}");
+                if (!_usingLegacyPlayer)
+                {
+                    await SwitchToLegacyAndPlayAsync();
+                    return;
+                }
+
+                ShowPlaybackError();
+            }
+        }
+
+        private async Task StopPlaybackAsync()
+        {
+            if (_playbackEngine is not null)
+            {
+                await _playbackEngine.StopAsync(_playbackLifecycle?.Token ?? CancellationToken.None);
+            }
+        }
+
+        private async Task SwitchToLegacyAndPlayAsync()
+        {
+            var cancellationToken = _playbackLifecycle?.Token ?? CancellationToken.None;
+            var lockAcquired = false;
+            try
+            {
+                await _fallbackLock.WaitAsync(cancellationToken);
+                lockAcquired = true;
+                if (_usingLegacyPlayer || _released || cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                if (_playbackEngine is not null)
+                {
+                    _playbackEngine.StateChanged -= OnPlaybackStateChanged;
+                }
+
+                (_playbackEngine as IDisposable)?.Dispose();
+                cancellationToken.ThrowIfCancellationRequested();
+                _playbackEngine = DecoratePlaybackEngine(new LegacyMediaPlayerEngine());
+                _usingLegacyPlayer = true;
+                _playbackEngine.StateChanged += OnPlaybackStateChanged;
+                await _playbackEngine.PlayAsync(
+                    new PlaybackRequest(_videoUrl, _channelName),
+                    cancellationToken);
+            }
+            catch (System.OperationCanceledException) when (_released)
+            {
+            }
+            finally
+            {
+                if (lockAcquired)
+                {
+                    _fallbackLock.Release();
+                }
+            }
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            InitializePlaybackEngine();
+        }
+
+        protected override void OnPause()
+        {
+            ReleasePlaybackEngine();
+            base.OnPause();
+        }
+
+        protected override void OnStop()
+        {
+            ReleasePlaybackEngine();
+            base.OnStop();
+        }
+
+        private void OnPlaybackStateChanged(object? sender, PlaybackStateChangedEventArgs args)
+        {
+            RunOnUiThread(async () =>
+            {
+                SetProgressVisible(args.State == PlaybackState.Buffering);
+                if (args.State == PlaybackState.Error && !_usingLegacyPlayer)
+                {
+                    await SwitchToLegacyAndPlayAsync();
+                    return;
+                }
+
+                if (args.State == PlaybackState.Completed)
+                {
+                    Toast.MakeText(this, "Stream finalizado.", ToastLength.Short)?.Show();
+                }
+                else if (args.State == PlaybackState.Error)
+                {
+                    Android.Util.Log.Warn("Hiptv/Playback", $"Erro técnico: {args.Message ?? "sem detalhes"}");
+                    ShowPlaybackError();
+                }
+            });
+        }
+
+        protected override void OnDestroy()
+        {
+            ReleasePlaybackEngine();
+            base.OnDestroy();
+        }
+
+        private void ReleasePlaybackEngine()
+        {
+            if (_released)
+            {
+                return;
+            }
+
+            _released = true;
+            _playbackLifecycle?.Cancel();
+            if (_playbackEngine is null)
+            {
+                return;
+            }
+
+            _playbackEngine.StateChanged -= OnPlaybackStateChanged;
+            (_playbackEngine as IDisposable)?.Dispose();
+            _playbackEngine = null;
+            _playbackLifecycle?.Dispose();
+            _playbackLifecycle = null;
+        }
+
+        private void SetProgressVisible(bool visible)
+        {
+            if (_progressBar is not null)
+            {
+                _progressBar.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
+            }
+        }
+
+        private void ShowPlaybackError()
+        {
+            SetProgressVisible(false);
+            Toast.MakeText(this, "Não foi possível reproduzir o stream. Verifique a conexão e tente novamente.", ToastLength.Long)?.Show();
         }
     }
 }

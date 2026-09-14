@@ -1,12 +1,13 @@
 using Android.Content;
 using IptvStarterApp.Models;
+using System.Text.Json;
 
 namespace IptvStarterApp.Services
 {
     public class FavoritesService
     {
         private const string PrefName = "HiptvFavorites";
-        private const string Key = "favorite_urls";
+        private const string Key = "favorite_items_v2";
 
         private readonly Context _context;
 
@@ -15,31 +16,42 @@ namespace IptvStarterApp.Services
             _context = context;
         }
 
-        public HashSet<string> LoadFavorites()
+        public IReadOnlyList<ChannelItem> GetFavorites()
         {
             var prefs = _context.GetSharedPreferences(PrefName, FileCreationMode.Private);
-            var raw = prefs.GetString(Key, string.Empty);
+            var raw = prefs?.GetString(Key, string.Empty);
 
             if (string.IsNullOrWhiteSpace(raw))
             {
-                return new HashSet<string>();
+                return Array.Empty<ChannelItem>();
             }
 
-            return new HashSet<string>(raw.Split('|', StringSplitOptions.RemoveEmptyEntries));
+            try
+            {
+                return (JsonSerializer.Deserialize<List<StoredChannel>>(raw) ?? new())
+                    .Select(item => item.ToChannel())
+                    .ToArray();
+            }
+            catch (JsonException)
+            {
+                return Array.Empty<ChannelItem>();
+            }
         }
 
         public void ToggleFavorite(ChannelItem channel)
         {
-            var favorites = LoadFavorites();
-            var key = BuildKey(channel);
+            ArgumentNullException.ThrowIfNull(channel);
+            var favorites = GetFavorites().ToList();
+            var existing = favorites.FindIndex(item =>
+                string.Equals(item.Url, channel.Url, StringComparison.OrdinalIgnoreCase));
 
-            if (favorites.Contains(key))
+            if (existing >= 0)
             {
-                favorites.Remove(key);
+                favorites.RemoveAt(existing);
             }
             else
             {
-                favorites.Add(key);
+                favorites.Insert(0, channel);
             }
 
             SaveFavorites(favorites);
@@ -47,20 +59,35 @@ namespace IptvStarterApp.Services
 
         public bool IsFavorite(ChannelItem channel)
         {
-            return LoadFavorites().Contains(BuildKey(channel));
+            return GetFavorites().Any(item =>
+                string.Equals(item.Url, channel.Url, StringComparison.OrdinalIgnoreCase));
         }
 
-        private void SaveFavorites(HashSet<string> favorites)
+        private void SaveFavorites(IEnumerable<ChannelItem> favorites)
         {
             var prefs = _context.GetSharedPreferences(PrefName, FileCreationMode.Private);
-            var editor = prefs.Edit();
-            editor.PutString(Key, string.Join("|", favorites));
+            var editor = prefs?.Edit();
+            if (editor is null)
+            {
+                return;
+            }
+
+            editor.PutString(Key, JsonSerializer.Serialize(favorites.Select(StoredChannel.FromChannel)));
             editor.Apply();
         }
 
-        private static string BuildKey(ChannelItem channel)
+        private sealed record StoredChannel(string Name, string Url, string Group, string? LogoUrl)
         {
-            return $"{channel.Name}|{channel.Url}";
+            public static StoredChannel FromChannel(ChannelItem channel) =>
+                new(channel.Name, channel.Url, channel.Group, channel.TvgLogo);
+
+            public ChannelItem ToChannel() => new()
+            {
+                Name = Name,
+                Url = Url,
+                Group = Group,
+                TvgLogo = LogoUrl
+            };
         }
     }
 }
