@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Compile Include="..\IptvStarterApp\Models\ChannelItem.cs" Link="Models\ChannelItem.cs" />
+    <Compile Include="..\IptvStarterApp\Application\UseCases\Playback\*.cs" Link="Application\UseCases\Playback\%(Filename)%(Extension)" />
     <Compile Include="..\IptvStarterApp\Domain\Enums\*.cs" Link="Domain\Enums\%(Filename)%(Extension)" />
     <Compile Include="..\IptvStarterApp\Domain\Entities\*.cs" Link="Domain\Entities\%(Filename)%(Extension)" />
     <Compile Include="..\IptvStarterApp\Domain\Interfaces\IContentRepository.cs" Link="Domain\Interfaces\IContentRepository.cs" />
@@ -25,6 +26,7 @@
     <Compile Include="..\IptvStarterApp\Domain\Playback\PlaybackState.cs" Link="Domain\Playback\PlaybackState.cs" />
     <Compile Include="..\IptvStarterApp\Domain\Interfaces\IPlaybackEngine.cs" Link="Domain\Interfaces\IPlaybackEngine.cs" />
     <Compile Include="..\IptvStarterApp\Domain\ValueObjects\*.cs" Link="Domain\ValueObjects\%(Filename)%(Extension)" />
+    <Compile Include="..\IptvStarterApp\Infrastructure\Persistence\*.cs" Link="Infrastructure\Persistence\%(Filename)%(Extension)" />
     <Compile Include="..\IptvStarterApp\Infrastructure\Playback\PlaybackMetrics.cs" Link="Infrastructure\Playback\PlaybackMetrics.cs" />
     <Compile Include="..\IptvStarterApp\Infrastructure\Playback\PlaybackHealthReport.cs" Link="Infrastructure\Playback\PlaybackHealthReport.cs" />
     <Compile Include="..\IptvStarterApp\Infrastructure\Playback\PlaybackDiagnostics.cs" Link="Infrastructure\Playback\PlaybackDiagnostics.cs" />
