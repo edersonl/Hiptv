@@ -175,4 +175,64 @@ public async Task ListAsync_ShouldRespectLimit()
         "Interestelar",
         result[0].MediaItem.Name);
 }
+[Fact]
+public async Task ListAsync_ShouldRespectProfileIsolation()
+{
+    var progressRepository =
+        new PlaybackProgressRepository();
+
+    var contentRepository =
+        new FakeContentRepository();
+
+    var movie1 = new Movie(
+        new MediaId("movie-local"),
+        "Matrix",
+        new Uri("https://example.com/movie1.mp4"));
+
+    var movie2 = new Movie(
+        new MediaId("movie-admin"),
+        "Interestelar",
+        new Uri("https://example.com/movie2.mp4"));
+
+    await contentRepository.SaveAsync(movie1);
+    await contentRepository.SaveAsync(movie2);
+
+    await progressRepository.SaveAsync(
+        new PlaybackProgress(
+            movie1.Id,
+            TimeSpan.FromMinutes(20),
+            TimeSpan.FromMinutes(120),
+            DateTimeOffset.UtcNow,
+            profileId: "local"));
+
+    await progressRepository.SaveAsync(
+        new PlaybackProgress(
+            movie2.Id,
+            TimeSpan.FromMinutes(30),
+            TimeSpan.FromMinutes(120),
+            DateTimeOffset.UtcNow,
+            profileId: "admin"));
+
+    var repository =
+        new ContinueWatchingRepository(
+            progressRepository,
+            contentRepository);
+
+    var localItems =
+        await repository.ListAsync("local");
+
+    var adminItems =
+        await repository.ListAsync("admin");
+
+    Assert.Single(localItems);
+    Assert.Single(adminItems);
+
+    Assert.Equal(
+        "Matrix",
+        localItems[0].MediaItem.Name);
+
+    Assert.Equal(
+        "Interestelar",
+        adminItems[0].MediaItem.Name);
+}
 }
