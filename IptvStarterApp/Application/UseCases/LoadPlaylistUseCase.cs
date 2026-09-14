@@ -9,7 +9,8 @@ public sealed class LoadPlaylistUseCase
 
     public LoadPlaylistUseCase(IPlaylistRepository playlistRepository)
     {
-        _playlistRepository = playlistRepository ?? throw new ArgumentNullException(nameof(playlistRepository));
+            _playlistRepository = playlistRepository
+            ?? throw new ArgumentNullException(nameof(playlistRepository));
     }
 
     public Task<IReadOnlyList<Channel>> ExecuteAsync(

@@ -48,12 +48,18 @@ public sealed class PlaybackProgress
     public bool IsEligibleForContinueWatching =>
         Status == PlaybackStatus.InProgress && Position >= TimeSpan.FromSeconds(30);
 
-    private static PlaybackStatus ResolveStatus(TimeSpan position, TimeSpan? duration)
+    private static PlaybackStatus ResolveStatus(
+        TimeSpan position,
+        TimeSpan? duration)
     {
-        if (position == TimeSpan.Zero) return PlaybackStatus.NotStarted;
-        if (duration is not { Ticks: > 0 } knownDuration) return PlaybackStatus.InProgress;
+        if (position == TimeSpan.Zero)
+        return PlaybackStatus.NotStarted;
+
+        if (duration is not { Ticks: > 0 } knownDuration)
+        return PlaybackStatus.InProgress;
 
         var remaining = knownDuration - position;
+
         return position.TotalMilliseconds / knownDuration.TotalMilliseconds >= 0.9 ||
                remaining <= TimeSpan.FromMinutes(2)
             ? PlaybackStatus.Completed
