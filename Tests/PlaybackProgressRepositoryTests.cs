@@ -27,4 +27,28 @@ public sealed class PlaybackProgressRepositoryTests
         Assert.NotNull(loaded);
         Assert.Equal(progress.MediaId, loaded!.MediaId);
     }
+
+    [Fact]
+    public async Task GetHistoryAsync_ShouldReturnStoredItems()
+    {
+        var repository = new PlaybackProgressRepository();
+
+        await repository.SaveAsync(
+            new PlaybackProgress(
+                new MediaId("movie-1"),
+                TimeSpan.FromMinutes(10),
+                TimeSpan.FromMinutes(120),
+                DateTimeOffset.UtcNow));
+
+        await repository.SaveAsync(
+            new PlaybackProgress(
+                new MediaId("movie-2"),
+                TimeSpan.FromMinutes(20),
+                TimeSpan.FromMinutes(120),
+                DateTimeOffset.UtcNow));
+
+        var history = await repository.GetHistoryAsync("local");
+
+        Assert.Equal(2, history.Count);
+    }
 }
