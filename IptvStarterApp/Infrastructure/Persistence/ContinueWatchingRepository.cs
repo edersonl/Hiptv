@@ -18,9 +18,10 @@ public sealed class ContinueWatchingRepository : IContinueWatchingRepository
         int limit = 20,
         CancellationToken cancellationToken = default)
     {
-        var history = await _progressRepository.GetHistoryAsync(
-            profileId,
-            cancellationToken);
+        var history =
+            await _progressRepository.GetHistoryAsync(
+                profileId,
+                cancellationToken);
 
         return Array.Empty<ContinueWatching>();
     }

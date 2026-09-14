@@ -8,11 +8,11 @@ public sealed class ContinueWatchingRepositoryTests
     [Fact]
     public void Repository_CanBeCreated()
     {
-        var playbackRepository =
+        var progressRepository =
             new PlaybackProgressRepository();
 
         var repository =
-            new ContinueWatchingRepository(playbackRepository);
+            new ContinueWatchingRepository(progressRepository);
 
         Assert.NotNull(repository);
     }
