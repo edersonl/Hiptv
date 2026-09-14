@@ -86,7 +86,21 @@
             <Button android:id="@+id/openFavoritesButton" android:layout_width="0dp" android:layout_height="56dp" android:layout_marginStart="8dp" android:layout_weight="1" android:backgroundTint="#374151" android:text="Favoritos" android:textColor="#FFFFFF" />
             <Button android:id="@+id/openSearchButton" android:layout_width="0dp" android:layout_height="56dp" android:layout_marginStart="8dp" android:layout_weight="1" android:backgroundTint="#374151" android:text="Buscar" android:textColor="#FFFFFF" />
         </LinearLayout>
+<TextView
+    style="@style/HomeSectionTitle"
+    android:text="Continuar assistindo" />
 
+<HorizontalScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:id="@+id/continueWatchingContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+</HorizontalScrollView>
         <TextView style="@style/HomeSectionTitle" android:text="Canais recentes" />
         <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none">
             <LinearLayout android:id="@+id/recentContainer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" />
