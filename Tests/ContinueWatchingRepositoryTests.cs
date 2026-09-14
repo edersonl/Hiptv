@@ -235,4 +235,30 @@ public async Task ListAsync_ShouldRespectProfileIsolation()
         "Interestelar",
         adminItems[0].MediaItem.Name);
 }
+[Fact]
+public async Task MissingMedia_ShouldBeIgnored()
+{
+    var progressRepository =
+        new PlaybackProgressRepository();
+
+    var contentRepository =
+        new FakeContentRepository();
+
+    await progressRepository.SaveAsync(
+        new PlaybackProgress(
+            new MediaId("movie-missing"),
+            TimeSpan.FromMinutes(10),
+            TimeSpan.FromMinutes(120),
+            DateTimeOffset.UtcNow));
+
+    var repository =
+        new ContinueWatchingRepository(
+            progressRepository,
+            contentRepository);
+
+    var result =
+        await repository.ListAsync("local");
+
+    Assert.Empty(result);
+}
 }
