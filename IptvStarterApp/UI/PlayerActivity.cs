@@ -246,7 +246,7 @@ namespace IptvStarterApp.UI
 
             ReleasePlaybackEngine();
 
-        base.OnPause();
+            base.OnPause();
         }
 
         protected override void OnStop()
@@ -283,55 +283,50 @@ namespace IptvStarterApp.UI
             ReleasePlaybackEngine();
             base.OnDestroy();
         }
-        protected override void OnDestroy()
-{
-            ReleasePlaybackEngine();
-        base.OnDestroy();
-}
         private void SavePlaybackProgress()
-{
+        {
             if (_playbackEngine is null)
             {
-            return;
+                return;
+            }
+
+            var duration =
+                _playbackEngine.Duration;
+
+            if (duration is null)
+            {
+                return;
+            }
+
+            var position =
+                _playbackEngine.Position;
+
+            if (position < TimeSpan.FromSeconds(30))
+            {
+                return;
+            }
+
+            var progress =
+            new PlaybackProgress(
+                new MediaId(_videoUrl),
+                position,
+                duration,
+                DateTimeOffset.UtcNow);
+
+            var history =
+              _playbackProgressService?
+                .GetHistory()
+                .ToList()
+                ?? new List<PlaybackProgress>();
+
+            history.RemoveAll(
+                item => item.MediaId.ToString() == _videoUrl);
+
+            history.Add(progress);
+
+            _playbackProgressService?
+             .SaveHistory(history);
         }
-
-        var duration =
-            _playbackEngine.Duration;
-
-        if (duration is null)
-        {
-            return;
-        }
-
-        var position =
-            _playbackEngine.Position;
-
-        if (position < TimeSpan.FromSeconds(30))
-        {
-            return;
-        }
-
-        var progress =
-        new PlaybackProgress(
-            new MediaId(_videoUrl),
-            position,
-            duration,
-            DateTimeOffset.UtcNow);
-
-        var history =
-          _playbackProgressService?
-            .GetHistory()
-            .ToList()
-            ?? new List<PlaybackProgress>();
-
-       history.RemoveAll(
-           item => item.MediaId.ToString() == _videoUrl);
-
-       history.Add(progress);
-
-       _playbackProgressService?
-        .SaveHistory(history);
-}
         private void ReleasePlaybackEngine()
         {
             if (_released)
